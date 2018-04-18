@@ -17,7 +17,8 @@ class Scraper:
         config.read('secrets.txt')
         self.lastfmsecret = config['lastfm']['secret']
         self.lastfmapi = config['lastfm']['api']
-        self.titlere = re.compile('^(.+?)(?= \([0-9]+\))')
+        # Regex for splitting a song title from the year it was released
+        self.titlere = re.compile('^(.+?)(?= \([0-9]{4}\))')
         if not filetoggle:
             try:
                 self.soup = BeautifulSoup(requests.get(dillaURL), 'html.parser')
@@ -109,7 +110,7 @@ class Scraper:
                                                              song.replace(" ", "+"), self.lastfmapi)
         try:
             response = requests.get(url)
-            if 'error' in response.json():
+            if response.status_code != 200 or 'error' in response.json():
                 genre = None
                 return genre
             else:
@@ -124,9 +125,8 @@ class Scraper:
 
     def scrapesongs_file(self, pagenum):
         # Return a list of dict items
-        # {Title:, Year:, Artist:, Producer:, Features:,
-        # SampledIn:, Sampled:}
-        # Features, SampledIn, and Samples are lists
+        # {Title:, Year:, Artist:, Producer:, Features:, Sampled:}
+        # Features and Samples are lists
         items = list()
         filename = "dilla" + str(pagenum)
         path = "pages/" + filename + ".html"
@@ -153,11 +153,11 @@ class Scraper:
             }
 
             items.append(info)
-            # print(info)
-            # print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            print(info)
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         return items
 
 
 if __name__ == "__main__":
     scraper = Scraper()
-    scraper.scrapesongs_file(4)
+    scraper.scrapesongs_file(6)

@@ -40,24 +40,26 @@ class DillaDB:
         self.cursor.execute(cmd)
         return self.cursor.lastrowid
 
-    def addartist(self, name):
-        cmd = 'INSERT IGNORE INTO Artists (Name) VALUE ("{}")'.format(name)
+    def addartist(self, dbname, idxname):
+        cmd = 'INSERT IGNORE INTO Artists (Name) VALUE ("{}")'.format(dbname)
         self.cursor.execute(cmd)
         artistid = self.cursor.lastrowid
-        if artistid != 0 and artistid not in self.artists:
-            self.artists.update({name: artistid})
+        if idxname not in self.artists:
+            self.artists.update({idxname: artistid})
 
     def addlink(self, songid, sampleid):
         cmd = 'INSERT INTO Rel (Song, Sampled) VALUES ({},{});'.format(songid, sampleid)
         self.cursor.execute(cmd)
 
     def addsample(self, sampleinfo):
-        artist = sampleinfo['Artist'].replace("'", "\\'").replace('"', '\\"').strip(' ')
+        artist = sampleinfo['Artist']  # .replace("'", "\\'").replace('"', '\\"').strip(' ')
+        dbartist = artist.replace("'", "\\'").replace('"', '\\"').strip(' ')
+        idxartist = artist.replace('"', '\"').replace("'", "\'").strip(' ')
         title = sampleinfo['Title'].replace("'", "\\'").replace('"', '\\"').strip(' ')
         year = sampleinfo['Year']
         genre = sampleinfo['Genre']
-        self.addartist(artist)
-        artistid = self.artists[artist]
+        self.addartist(dbartist, idxartist)
+        artistid = self.artists[idxartist]
         cmd = 'INSERT INTO Songs (Title, ReleaseYear, Artist, DillaBit, Genre) VALUES ' \
               '(\'{}\',{},{},{},\'{}\');'.format(title, year, artistid, 0, genre)
         self.cursor.execute(cmd)
@@ -68,6 +70,7 @@ class DillaDB:
         title = songinfo['Title']
         year = songinfo['Year']
         artist = songinfo['Artist'].replace("'", "\\'").replace('"', '\\"')
+        idxartist = artist.replace('"', '\"').replace("'", "\'").strip(' ')
         prod = songinfo['Producer']
         genre = songinfo['Genre']
         features = songinfo['Features']
@@ -79,19 +82,20 @@ class DillaDB:
             dilla = 0
         # If artist/producer is J Dilla, pabit = 1
         # If just producer pabit = 0
-        # I think? I'll need to check my notes
         if artist in dillanames:
             pabit = 1
         else:
             pabit = 0
 
-        self.addartist(artist)
-        self.addartist(prod)
+        self.addartist(artist, idxartist)
+        self.addartist(prod, prod)
         artistid = self.artists[artist]
         prodid = self.artists[prod]
 
         for feat in features:
-            self.addartist(feat)
+            dbfeat = feat.replace("'", "\\'").replace('"', '\\"')
+            idxfeat = feat.replace("'", "\'").replace('"', '\"')
+            self.addartist(dbfeat, idxfeat)
 
         for sample in songinfo['Sampled']:
             samples.append(self.addsample(sample))

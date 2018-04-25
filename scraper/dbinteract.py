@@ -21,7 +21,7 @@ class DillaDB:
             self.cursor.execute('SET CHARACTER SET utf8;')
             self.cursor.execute('SET character_set_connection=utf8;')
             self.cursor.execute("SHOW TABLES;")
-            if len(self.cursor.fetchall()) != 4:
+            if len(self.cursor.fetchall()) != 5:
                 print("Error! MySQL tables not initialized.\nLog into your favorite mysql platform as root at "
                       "localhost, then run the createdb.sql script.\nThis will create the appropriate user and "
                       "tables to be used. Then, rerun this initialization. How'd you do this, anyway?")

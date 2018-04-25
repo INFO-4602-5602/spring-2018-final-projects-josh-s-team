@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Songs (
 	Artist smallint unsigned NOT NULL,
 	Producer smallint unsigned,
 	DillaBit tinyint(1) NOT NULL DEFAULT 1,
-	PABit tinyint(1) NOT NULL DEFAULT 1,
+	PABit tinyint(1) DEFAULT NULL,
 	Genre char(255) DEFAULT NULL,
 	PRIMARY KEY (ID),
 	UNIQUE(ID),
@@ -46,4 +46,9 @@ CREATE VIEW IF NOT EXISTS DillaSongs AS
 	SELECT *
 	FROM Songs
 	WHERE DillaBit = 1;
+
+CREATE VIEW IF NOT EXISTS Samples AS
+	SELECT *
+	FROM Songs
+	WHERE DillaBit = 0;
 

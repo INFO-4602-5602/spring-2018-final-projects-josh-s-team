@@ -53,6 +53,14 @@ class DillaDB:
 
     def addsample(self, sampleinfo):
         artist = sampleinfo['Artist']  # .replace("'", "\\'").replace('"', '\\"').strip(' ')
+        # So there's a difference between the syntax needed in MySQL and the syntax for python dictionaries
+        # dbartist is the artist string for adding the artist to the database
+        # idxartist is the string used for retrieving the artist ID from the local dict
+        # Basically the only difference is that for the database, there need to be two backslashes before a quote
+        # because the actual string argument needs to have the slash in it:
+        #       INSERT INTO Songs (blah, blah, artist) VALUES (blah, blah, "Artist\'s Name")
+        # As opposed to
+        #       INSERT INTO Songs (blah, blah, artist) VALUES (blah, blah, "Artist's Name")
         dbartist = artist.replace("'", "\\'").replace('"', '\\"').strip(' ')
         idxartist = artist.replace('"', '\"').replace("'", "\'").strip(' ')
         title = sampleinfo['Title'].replace("'", "\\'").replace('"', '\\"').strip(' ')

@@ -117,8 +117,11 @@ class Scraper:
                 tags = response.json()['toptags']['tag']
                 if len(tags) == 0:
                     genre = None
+                elif "jazz" in tags:
+                    genre = "jazz"
                 else:
                     genre = tags[0]['name'].lower()
+            print(genre)
             return genre
         except requests.exceptions.RequestException as e:
             print(e)

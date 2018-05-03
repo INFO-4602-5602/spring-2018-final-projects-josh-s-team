@@ -42,7 +42,6 @@ class Export:
         names = list()
         for col in info:
             names.append(info[0])
-        print(names)
         return names
 
     @staticmethod
@@ -70,15 +69,22 @@ class Export:
         objects_list = []
         for row in rellist:
             d = collections.OrderedDict()
-            d['id'] = row[0]
-            d['song'] = row[1]
-            d['sampled'] = row[2]
+            d['song'] = row[0]
+            d['sampled'] = row[1]
             objects_list.append(d)
 
         j = json.dumps(objects_list)
         file = filename + ".json"
         f = open(file, 'w')
         print(j, file=f)
+
+    @staticmethod
+    def add_dilla_rels(rels, dillasongs):
+        for song in dillasongs:
+            songid = song[0]
+            link = (0, songid)
+            rels = (link,) + rels
+        return rels
 
     def export(self):
         print("Exporting...")
@@ -88,8 +94,9 @@ class Export:
         self.cursor.execute("SELECT * FROM SampleExportSampledSongs")
         sampledsongs = self.cursor.fetchall()
         self.songs_to_json(sampledsongs, "sampledsongs")
-        self.cursor.execute("SELECT * FROM SampleExportRel")
+        self.cursor.execute("SELECT song, sampled FROM SampleExportRel")
         rels = self.cursor.fetchall()
+        rels = self.add_dilla_rels(rels, dillasongs)
         self.rels_to_json(rels, "rels")
 
 

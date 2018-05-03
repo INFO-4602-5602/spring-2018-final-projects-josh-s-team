@@ -1,0 +1,10 @@
+#Info Viz Final Project
+#Spring 2018
+#Joshua Griffiths, 
+
+
+
+samRels = [{"song": 0, "sampled": 38}, {"song": 0, "sampled": 34}, {"song": 0, "sampled": 31}, {"song": 0, "sampled": 28}, {"song": 0, "sampled": 25}, {"song": 0, "sampled": 23}, {"song": 0, "sampled": 20}, {"song": 0, "sampled": 18}, {"song": 0, "sampled": 15}, {"song": 0, "sampled": 12}, {"song": 0, "sampled": 8}, {"song": 0, "sampled": 5}, {"song": 0, "sampled": 2}, {"song": 2, "sampled": 1}, {"song": 5, "sampled": 3}, {"song": 5, "sampled": 4}, {"song": 8, "sampled": 6}, {"song": 8, "sampled": 7}, {"song": 12, "sampled": 9}, {"song": 12, "sampled": 10}, {"song": 12, "sampled": 11}, {"song": 15, "sampled": 13}, {"song": 15, "sampled": 14}, {"song": 18, "sampled": 16}, {"song": 18, "sampled": 17}, {"song": 20, "sampled": 19}, {"song": 23, "sampled": 21}, {"song": 23, "sampled": 22}, {"song": 25, "sampled": 24}, {"song": 28, "sampled": 26}, {"song": 28, "sampled": 27}, {"song": 31, "sampled": 29}, {"song": 31, "sampled": 30}, {"song": 34, "sampled": 32}, {"song": 34, "sampled": 33}, {"song": 38, "sampled": 35}, {"song": 38, "sampled": 36}, {"song": 38, "sampled": 37}]
+
+
+print(samRels)

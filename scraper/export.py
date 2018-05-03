@@ -22,10 +22,10 @@ class Export:
                 print("Error! It looks like all the tables aren't there.\n Try logging into your favorite MySQL client"
                       "as root at localhost and executing the prepare.sql script. This should get everything ready"
                       "for exporting. At least for the test. I think.\n")
-            self.cursor.execute("DESCRIBE SampleExportSongs")
-            self.songCols = self.get_column_names(self.cursor.fetchall())
-            self.cursor.execute("DESCRIBE SampleExportArtists")
-            self.artistCols = self.get_column_names(self.cursor.fetchall())
+            self.cursor.execute("DESCRIBE SampleExportDillaSongs")
+            self.dillaSongCols = self.get_column_names(self.cursor.fetchall())
+            self.cursor.execute("DESCRIBE SampleExportSampledSongs")
+            self.sampledSongCols = self.get_column_names(self.cursor.fetchall())
             self.cursor.execute("DESCRIBE SampleExportRel")
             self.relCols = self.get_column_names(self.cursor.fetchall())
         except pymysql.err.OperationalError as e:
@@ -37,49 +37,38 @@ class Export:
             print(e)
             exit(1)
 
-    def get_column_names(self, info):
+    @staticmethod
+    def get_column_names(info):
         names = list()
         for col in info:
             names.append(info[0])
+        print(names)
         return names
 
-    def artists_to_json(self, list):
-        print("Processing artists")
-        objects_list = []
-        for row in list:
-            d = collections.OrderedDict()
-            d['id'] = row[0]
-            d['name'] = row[1]
-            objects_list.append(d)
-
-        j = json.dumps(objects_list)
-        file = 'testArtists.json'
-        f = open(file, 'w')
-        print(j, file=f)
-
-    def songs_to_json(self, list):
+    @staticmethod
+    def songs_to_json(songlist, filename):
         print("Processing songs")
         objects_list = []
-        for row in list:
+        for row in songlist:
             d = collections.OrderedDict()
             d['id'] = row[0]
             d['title'] = row[1]
             d['year'] = row[2]
-            d['artistid'] = row[3]
+            d['artist'] = row[8]
             d['producerid'] = row[4]
-            d['dilla'] = row[5]
             d['genre'] = row[7]
             objects_list.append(d)
 
         j = json.dumps(objects_list)
-        file = 'testSongs.json'
+        file = filename + ".json"
         f = open(file, 'w')
         print(j, file=f)
 
-    def rels_to_json(self, list):
+    @staticmethod
+    def rels_to_json(rellist, filename):
         print("Processing relations")
         objects_list = []
-        for row in list:
+        for row in rellist:
             d = collections.OrderedDict()
             d['id'] = row[0]
             d['song'] = row[1]
@@ -87,21 +76,21 @@ class Export:
             objects_list.append(d)
 
         j = json.dumps(objects_list)
-        file = 'testRel.json'
+        file = filename + ".json"
         f = open(file, 'w')
         print(j, file=f)
 
     def export(self):
         print("Exporting...")
-        self.cursor.execute("SELECT * FROM SampleExportSongs")
-        songs = self.cursor.fetchall()
-        self.songs_to_json(songs)
-        self.cursor.execute("SELECT * FROM SampleExportArtists")
-        artists = self.cursor.fetchall()
-        self.artists_to_json(artists)
+        self.cursor.execute("SELECT * FROM SampleExportDillaSongs")
+        dillasongs = self.cursor.fetchall()
+        self.songs_to_json(dillasongs, "dillasongs")
+        self.cursor.execute("SELECT * FROM SampleExportSampledSongs")
+        sampledsongs = self.cursor.fetchall()
+        self.songs_to_json(sampledsongs, "sampledsongs")
         self.cursor.execute("SELECT * FROM SampleExportRel")
         rels = self.cursor.fetchall()
-        self.rels_to_json(rels)
+        self.rels_to_json(rels, "rels")
 
 
 if __name__ == "__main__":

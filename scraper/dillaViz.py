@@ -8,7 +8,7 @@ from bokeh.io import save, output_file, show
 
 
 #Open Json Files With JDilla connections
-with open('rels.json') as fp:
+with open('relsfull.json') as fp:
     songs = json.load(fp)
 
 
@@ -41,13 +41,11 @@ padding = dict(x=(-1.2, 1.2), y=(-1.2, 1.2))
 
 
 #Create hoverable Graph
-
-print(numNodes)
 node_labels = ['Test']*(numNodes+1)
 node_info = hv.Dataset(node_labels, vdims='Label')
 
 dillaGraph = hv.Graph.from_networkx(dillaGraph, nx.layout.spring_layout).redim.range(**padding)
-dillaGraph = hv.Graph((dillaGraph), label = 'JDilla Sampled Song Network Graph').redim.range(**padding)
+dillaGraph = hv.Graph((dillaGraph), label = 'JDilla Sampled Song Network Graph').redim.range(**padding).options(width = 1000, height = 1000)
 
 
 

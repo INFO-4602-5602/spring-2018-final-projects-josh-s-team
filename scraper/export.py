@@ -22,11 +22,11 @@ class Export:
                 print("Error! It looks like all the tables aren't there.\n Try logging into your favorite MySQL client"
                       "as root at localhost and executing the prepare.sql script. This should get everything ready"
                       "for exporting. At least for the test. I think.\n")
-            self.cursor.execute("DESCRIBE SampleExportDillaSongs")
+            self.cursor.execute("DESCRIBE ExportDillaSongs")
             self.dillaSongCols = self.get_column_names(self.cursor.fetchall())
-            self.cursor.execute("DESCRIBE SampleExportSampledSongs")
+            self.cursor.execute("DESCRIBE ExportSampledSongs")
             self.sampledSongCols = self.get_column_names(self.cursor.fetchall())
-            self.cursor.execute("DESCRIBE SampleExportRel")
+            self.cursor.execute("DESCRIBE ExportRels")
             self.relCols = self.get_column_names(self.cursor.fetchall())
         except pymysql.err.OperationalError as e:
             print("Error! Couldn't connect to MySQL database\n")
@@ -71,6 +71,7 @@ class Export:
             d = collections.OrderedDict()
             d['song'] = row[0]
             d['sampled'] = row[1]
+            print(d)
             objects_list.append(d)
 
         j = json.dumps(objects_list)
@@ -88,16 +89,16 @@ class Export:
 
     def export(self):
         print("Exporting...")
-        self.cursor.execute("SELECT * FROM SampleExportDillaSongs")
+        self.cursor.execute("SELECT * FROM ExportDillaSongs")
         dillasongs = self.cursor.fetchall()
-        self.songs_to_json(dillasongs, "dillasongs")
-        self.cursor.execute("SELECT * FROM SampleExportSampledSongs")
+        self.songs_to_json(dillasongs, "dillasongsfull")
+        self.cursor.execute("SELECT * FROM ExportSampledSongs")
         sampledsongs = self.cursor.fetchall()
-        self.songs_to_json(sampledsongs, "sampledsongs")
-        self.cursor.execute("SELECT song, sampled FROM SampleExportRel")
+        self.songs_to_json(sampledsongs, "sampledsongsfull")
+        self.cursor.execute("SELECT song, sampled FROM ExportRels")
         rels = self.cursor.fetchall()
         rels = self.add_dilla_rels(rels, dillasongs)
-        self.rels_to_json(rels, "rels")
+        self.rels_to_json(rels, "relsfull")
 
 
 if __name__ == "__main__":

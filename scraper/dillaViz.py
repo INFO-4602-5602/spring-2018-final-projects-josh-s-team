@@ -7,8 +7,6 @@ hv.extension('bokeh')
 from bokeh.io import save, output_file, show
 
 
-#%opts Graph [width=400 height=400]
-
 #Open Json Files With JDilla connections
 with open('rels.json') as fp:
     songs = json.load(fp)
@@ -16,7 +14,6 @@ with open('rels.json') as fp:
 
 #Create Edge List
 edgeList = []
-
 for edge in songs:
     connect = ()
     for k, v in edge.items():
@@ -27,25 +24,37 @@ for edge in songs:
 #Create empty graph
 dillaGraph = nx.Graph()
 
+numNodes = 0
+
 #Add edges to graph
 for entry in edgeList:
     i = 0 
     j = 1
     dillaGraph.add_edge(entry[i],entry[j])
+    numNodes += 1
 
 
-
+#For Display Purposes
 padding = dict(x=(-1.2, 1.2), y=(-1.2, 1.2))
 
-#Display grap
-#%%opts Graph [tools=['hover']]
-#songs = nx.spring_layout(g, scale = 10)
-#nx.draw(G = g, pos = songs,with_labels = True)
+
+
+
+#Create hoverable Graph
+
+print(numNodes)
+node_labels = ['Test']*(numNodes+1)
+node_info = hv.Dataset(node_labels, vdims='Label')
+
 dillaGraph = hv.Graph.from_networkx(dillaGraph, nx.layout.spring_layout).redim.range(**padding)
+dillaGraph = hv.Graph((dillaGraph, kdims = ['test']), label = 'JDilla Sampled Song Network Graph').redim.range(**padding)
 
 
+
+
+
+
+#For exportation Purposes
 renderer = hv.renderer('bokeh')
-dG = renderer.get_plot(dillaGraph).state
-#save(dillaGraph, 'dillaGraph.html')
-
-show(dG)
+dillaGraph = renderer.get_plot(dillaGraph).state
+show(dillaGraph)

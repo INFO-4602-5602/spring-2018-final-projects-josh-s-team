@@ -47,7 +47,7 @@ node_labels = ['Test']*(numNodes+1)
 node_info = hv.Dataset(node_labels, vdims='Label')
 
 dillaGraph = hv.Graph.from_networkx(dillaGraph, nx.layout.spring_layout).redim.range(**padding)
-dillaGraph = hv.Graph((dillaGraph, kdims = ['test']), label = 'JDilla Sampled Song Network Graph').redim.range(**padding)
+dillaGraph = hv.Graph((dillaGraph), label = 'JDilla Sampled Song Network Graph').redim.range(**padding)
 
 
 
